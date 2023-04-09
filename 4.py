@@ -11,9 +11,11 @@ def print_query_result(result):
 
 connector = msql.connect(user='root', password='',
                               host='localhost',
-                              database='students')
+                              database='')
 
 cursor = connector.cursor()
+
+# Подсчитать общее количество лайков, которые получили пользователи младше 12 лет.
 query = "SELECT COUNT(*) FROM likes  \
     INNER JOIN media ON  likes.media_id = media.id \
     INNER JOIN profiles ON media.user_id = profiles.user_id \
@@ -23,6 +25,7 @@ cursor.execute(query)
 result = cursor.fetchall()
 print_query_result(result)
 
+# Определить кто больше поставил лайков (всего): мужчины или женщины. 
 query = "SELECT COUNT(*) FROM likes  \
     INNER JOIN profiles ON  likes.user_id = profiles.user_id \
     WHERE profiles.gender='m'\
@@ -35,12 +38,15 @@ cursor.execute(query)
 result = cursor.fetchall()
 print_query_result(result)
 
+# Вывести всех пользователей, которые не отправляли сообщения.
 query = "SELECT * FROM users WHERE NOT users.id IN (SELECT DISTINCT from_user_id FROM messages);"
 
 cursor.execute(query)
 result = cursor.fetchall()
 print_query_result(result)
 
+# (по желанию)* Пусть задан некоторый пользователь. 
+# Из всех друзей этого пользователя найдите человека, который больше всех написал ему сообщений.
 query = "SELECT from_user_id, to_user_id, COUNT(to_user_id) AS c \
 FROM messages WHERE to_user_id IN \
 (SELECT target_user_id FROM friend_requests WHERE status='approved'\
